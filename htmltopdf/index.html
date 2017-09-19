@@ -4,15 +4,17 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>htmltopdf</title>
 	<style>
-		html,body{background:#fff;margin:0;padding:0;height:100%;}
+		html,body{margin:0;padding:0;height:100% ;}
+    section{margin-bottom:10px;color:#000;}
 	</style>
 </head>
-<body>
-	<section style='color:#000'>Coming to life as a chunk of stone, Tiny's origins are a mystery on which he continually speculates. He is a Stone Giant now, but what did he used to be? A splinter broken from a Golem's heel? A shard swept from a gargoyle-sculptor's workshop? A fragment of the Oracular Visage of Garthos? A deep curiosity drives him, and he travels the world tirelessly seeking his origins, his parentage, his people. As he roams, he gathers weight and size; the forces that weather lesser rocks, instead cause Tiny to grow and ever grow.</section>
-	
+<body style='background:#fff;height:100%;width:90%;padding:2rem 5%'  >
+	<section style='color:#000;font-size:1rem'>Coming to life as a chunk of stone, Tiny's origins are a mystery on which he continually speculates. He is a Stone Giant now, but what did he used to be? A splinter broken from a Golem's heel? A shard swept from a gargoyle-sculptor's workshop? A fragment of the Oracular Visage of Garthos? A deep curiosity drives him, and he travels the world tirelessly seeking his origins, his parentage, his people. As he roams, he gathers weight and size; the forces that weather lesser rocks, instead cause Tiny to grow and ever grow.</section>
+	 <section style='color:#000;font-size:1rem'>Coming to life as a chunk of stone, Tiny's origins are a mystery on which he continually speculates. He is a Stone Giant now, but what did he used to be? A splinter broken from a Golem's heel? A shard swept from a gargoyle-sculptor's workshop? A fragment of the Oracular Visage of Garthos? A deep curiosity drives him, and he travels the world tirelessly seeking his origins, his parentage, his people. As he roams, he gathers weight and size; the forces that weather lesser rocks, instead cause Tiny to grow and ever grow.</section>
+    <section style='color:#000;font-size:1rem'>Coming to life as a chunk of stone, Tiny's origins are a mystery on which he continually speculates. He is a Stone Giant now, but what did he used to be? A splinter broken from a Golem's heel? A shard swept from a gargoyle-sculptor's workshop? A fragment of the Oracular Visage of Garthos? A deep curiosity drives him, and he travels the world tirelessly seeking his origins, his parentage, his people. As he roams, he gathers weight and size; the forces that weather lesser rocks, instead cause Tiny to grow and ever grow.</section>
 	<img src="付费功能情况.png">
 	<img src="4.jpg" style='width: 100px;'>
-	<button id="renderPdf">下载pdf</button>
+	<button id="renderPdf" style='font-size:4rem'>下载pdf</button>
 	<img src="" class='newImg' style='max-width:500px'> 
 
 <script src='html2canvas.js'></script>
@@ -24,18 +26,32 @@
       downPdf.onclick = function() {
           html2canvas(document.body, {
               onrendered:function(canvas) {
+                var w = canvas.width;
+                var h = canvas.height;
+                //方向默认竖直，尺寸ponits，格式a4【595.28,841.89]
+                var pageW =595.28;
+                var pageH = 595.28 / w * h;
+                var position = 0;
+                var left = pageH;
+                //返回图片URL，参数：图片格式和清晰度(0-1)
+                var pageData = canvas.toDataURL('image/jpeg', 1.0);
+                var pdf = new jsPDF('', 'pt', 'a4');
 
-                  //返回图片URL，参数：图片格式和清晰度(0-1)
-                  var pageData = canvas.toDataURL('image/jpeg', 1.0);
-                  // var img = document.createElement('img');
-                  // img.setAttribute('src',pageData);
-                  // document.body.appendChild(img);
-                  //方向默认竖直，尺寸ponits，格式a4【595.28,841.89]
-                  var pdf = new jsPDF('', 'pt', 'a4');
-
-                  // //需要dataUrl格式
+                //判断是否要分页处理
+                if(pageH < 595.28){
                   pdf.addImage(pageData, 'JPEG', 0, 0, 595.28, 592.28/canvas.width * canvas.height );
+                }else{
+                  while(left > 0){
+                    pdf.addImage(pageData, 'jpeg', 0 , position, pageW, pageH);
+                    left -= 841.89;
+                    position -= 841.89;
 
+                    if(left > 0){
+                      pdf.addPage();
+                    }
+                  }
+
+                }
                   pdf.save('content.pdf');
 
               }
